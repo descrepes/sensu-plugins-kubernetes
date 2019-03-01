@@ -35,6 +35,7 @@
 #        --include-nodes              Include the specified nodes (comma separated list), an
 #                                     empty list includes all nodes
 #    -f, --filter FILTER              Selector filter for pods to be checked
+#        --filter-empty-ok            Exit OK when the selector filter return an empty list
 #    -p, --pods PODS                  List of pods to check
 #    -r, --restart COUNT              Threshold for number of restarts allowed
 #
@@ -73,6 +74,12 @@ class PodsRestarting < Sensu::Plugins::Kubernetes::CLI
          short: '-f FILTER',
          long: '--filter'
 
+  option :pod_filter_empty_ok,
+         description: 'Exit OK when the selector filter return an empty list',
+         long: '--filter-empty-ok',
+         boolean: true,
+         default: false
+
   option :exclude_namespace,
          description: 'Exclude the specified list of namespaces',
          short: '-n NAMESPACES',
@@ -109,7 +116,11 @@ class PodsRestarting < Sensu::Plugins::Kubernetes::CLI
     else
       pods = client.get_pods(label_selector: config[:pod_filter].to_s)
       if pods.empty?
-        unknown 'The filter specified resulted in 0 pods'
+        if config[:pod_filter_empty_ok]
+          ok 'The filter specified resulted in 0 pods'
+        else
+          unknown 'The filter specified resulted in 0 pods'
+        end
       end
       pods_list = ['all']
     end

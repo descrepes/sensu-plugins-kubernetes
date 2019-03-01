@@ -80,6 +80,7 @@ Usage: check-kube-pods-pending.rb (options)
                                      empty list includes all nodes
     -t, --timeout TIMEOUT            Threshold for pods to be in the pending state
     -f, --filter FILTER              Selector filter for pods to be checked
+        --filter-empty-ok            Exit OK when the selector filter return an empty list
     -p, --pods PODS                  List of pods to check
     -r, --restart COUNT              Threshold for number of restarts allowed
         --kube-config KUBECONFIG     Path to a kube config file
@@ -145,6 +146,7 @@ Usage: ./check-kube-pods-running.rb (options)
         --include-nodes              Include the specified nodes (comma separated list), an
                                      empty list includes all nodes
     -f, --filter FILTER              Selector filter for pods to be checked
+        --filter-empty-ok            Exit OK when the selector filter return an empty list
     -p, --pods PODS                  List of pods to check
         --kube-config KUBECONFIG     Path to a kube config file
 ```
@@ -172,6 +174,7 @@ Usage: ./check-kube-pods-restarting.rb (options)
         --include-nodes              Include the specified nodes (comma separated list), an
                                      empty list includes all nodes
     -f, --filter FILTER              Selector filter for pods to be checked
+        --filter-empty-ok            Exit OK when the selector filter return an empty list
     -p, --pods PODS                  List of pods to check
     -r, --restart COUNT              Threshold for number of restarts allowed
         --kube-config KUBECONFIG     Path to a kube config file

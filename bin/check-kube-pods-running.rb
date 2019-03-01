@@ -36,6 +36,7 @@
 #                                      empty list includes all nodes
 #         --time TIME                  Threshold for pods to be in the non ready state
 #     -f, --filter FILTER              Selector filter for pods to be checked
+#         --filter-empty-ok            Exit OK when the selector filter return an empty list
 #     -p, --pods PODS                  List of pods to check
 # NOTES:
 # => The filter used for the -f flag is in the form key=value. If multiple
@@ -70,6 +71,12 @@ class AllPodsAreRunning < Sensu::Plugins::Kubernetes::CLI
          description: 'Selector filter for pods to be checked',
          short: '-f FILTER',
          long: '--filter'
+
+  option :pod_filter_empty_ok,
+         description: 'Exit OK when the selector filter return an empty list',
+         long: '--filter-empty-ok',
+         boolean: true,
+         default: false
 
   option :exclude_namespace,
          description: 'Exclude the specified list of namespaces',
@@ -107,7 +114,11 @@ class AllPodsAreRunning < Sensu::Plugins::Kubernetes::CLI
     else
       pods = client.get_pods(label_selector: config[:pod_filter].to_s)
       if pods.empty?
-        unknown 'The filter specified resulted in 0 pods'
+        if config[:pod_filter_empty_ok]
+          ok 'The filter specified resulted in 0 pods'
+        else
+          unknown 'The filter specified resulted in 0 pods'
+        end
       end
       pods_list = ['all']
     end
